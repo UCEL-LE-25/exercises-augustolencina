@@ -3,9 +3,9 @@
 
 typedef struct
 {
-    int cantPedido1;
-    int cantPedido2;
-    int cantPedido3;
+    int cantPed1;
+    int cantPed2;
+    int cantPed3;
 } Pedido;
 
 typedef struct
