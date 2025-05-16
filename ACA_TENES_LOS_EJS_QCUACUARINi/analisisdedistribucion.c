@@ -15,11 +15,17 @@ int main(){
         switch (option)
         {
             case 1:
-                registrarRecusos(arrayResources, &water, &food, &medicine);
+                registrarRecursos(arrayResources, &water, &food, &medicine);
                 break;
-            case 2:
-                compararRecusos(water, food, medicine);
+
+                case 2:
+                printMayorYMenorRecurso(arrayResources);
                 break;
+
+            case 3:
+                printPromedioRecursos(arrayResources);
+                break;
+
             case 4:
                 continuar = 1;
                 break;
@@ -27,7 +33,11 @@ int main(){
             default:
                 break;
         }
-    }while (continuar != 1)
+    }while (continuar != 1);
 
     return 0;
 }
+
+
+
+
