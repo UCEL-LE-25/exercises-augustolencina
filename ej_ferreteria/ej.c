@@ -1,12 +1,15 @@
 #include<stdio.h>
+#include<string.h>
+
 #define MIN_UNITS 3
+#define MAX_PRODUCTS 9
+#define MAX_CART 20
 
 typedef struct
 {
-    int cantPedido1;
-    int cantPedido2;
-    int cantPedido3;
-} Pedido;
+    char name[20];
+    int units;
+} Order;
 
 typedef struct
 {
@@ -17,94 +20,88 @@ typedef struct
     int isActive;
 } Product;
 
-void checkMin(Product *selectedProduct);
-
 int main()
 {
-    Product products[3][3] = {
+    Product products[MAX_PRODUCTS] = {
         {{1,"clavo",25.5,60,1}, {2,"bulon",22,55,1}, {3,"tornillo",20,30,1}},
         {{4,"cinta",15,10,1}, {5,"destornillador",30,10,1}, {6,"tuerca",12,40,1}},
         {{7,"pegamento",15,23,1}, {8,"cuter",20,11,1}, {9,"taladro",40,50,1}}
     };
 
-    int idProduct;
-    Pedido pedido = {0, 0, 0};
+    Order cart[MAX_CART];
+    int cartSize = 0;
+
+    int productId;
+
+    printf("\nCATALOGO DE PRODUCTOS\n");
+    printf("Codigo | Nombre           | Precio | Stock\n");
+    printf("----------------------------------------\n");
+    for (int i = 0; i < 9; i++) {
+        if (products[i].isActive) {
+            printf("%2d | %-15s | %6.2f | %5d\n", products[i].id, products[i].name, products[i].price, products[i].units);
+        }
+    }
     
     do
-    {
+    {   
         printf("\nIngrese el id del producto (0 para salir): ");
-        scanf("%d", &idProduct);
-        
-        if(idProduct == 0) break;
+        scanf("%d", &productId);
 
-        int encontrado = 0;
+        int found = 0;
         
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < MAX_PRODUCTS; i++)
         {
-            for (int j = 0; j < 3; j++)
+            if (products[i].id == productId)
             {
-                if (products[i][j].id == idProduct)
+                found = 1;
+
+                if (products[i].isActive == 1)
                 {
-                    encontrado = 1;
-                    checkMin(&products[i][j]);
-                    
-                    if(products[i][j].isActive)
-                    {
-                        printf("Producto: %s - Precio: %.2f - Stock: %d\n", 
-                               products[i][j].name, products[i][j].price, products[i][j].units);
-                        printf("Ingrese la cantidad que quiere comprar: ");
-                        int cant;
-                        scanf("%d", &cant);
+                    int amount;
+                    printf("Ingrese la cantidad que quiere comprar: ");
+                    scanf("%d", &amount);
                         
-                        if (products[i][j].units >= cant)
-                        {
-                            products[i][j].units -= cant;
-                            
-                            
-                            if(pedido.cantPedido1 == 0)
-                                pedido.cantPedido1 = cant;
-                            else if(pedido.cantPedido2 == 0)
-                                pedido.cantPedido2 = cant;
-                            else
-                                pedido.cantPedido3 = cant;
-                                
-                            printf("Compra realizada! Stock restante: %d\n", products[i][j].units);
-                        }
-                        else
-                        {
-                            printf("No hay suficiente stock!\n");
-                        }
-                    } 
+                    if (products[i].units >= amount)
+                    {
+                        products[i].units -= amount;
+                        strcpy(cart[cartSize].name, products[i].name);
+                        cart[cartSize].units = amount;
+                        cartSize++;
+                        printf("Compra realizada! Stock restante: %d\n", products[i].units);
+                    }
                     else
                     {
-                        printf("Producto no disponible (stock bajo minimo)!\n");
+                        printf("No hay suficiente stock!\n");
                     }
-                    break;
+                } 
+                else
+                {
+                    printf("Producto no disponible (stock bajo minimo)!\n");
                 }
             }
-            if(encontrado) break;
         }
-        
-        if(!encontrado && idProduct != 0)
+
+        if (found == 0)
         {
             printf("Producto no encontrado!\n");
         }
-        
-    } while (idProduct != 0);
-    
-    
-    printf("\nResumen del pedido:\n");
-    printf("Producto 1: %d unidades\n", pedido.cantPedido1);
-    printf("Producto 2: %d unidades\n", pedido.cantPedido2);
-    printf("Producto 3: %d unidades\n", pedido.cantPedido3);
+    } while (productId != 0);
+
+    if (cartSize > 0)
+    {
+        printf("\n--- RESUMEN DE LA COMPRA ---\n");
+        printf("Nombre del producto | Cantidad\n");
+        printf("-----------------------------\n");
+
+        for (int i = 0; i < cartSize; i++)
+        {
+            printf("%-18s | %d\n", cart[i].name, cart[i].units);
+        }
+    } 
+    else
+    {
+        printf("\nEl carrito está vacío.\n");
+    }
     
     return 0;    
-}
-
-void checkMin(Product *selectedProduct)
-{
-    if (selectedProduct->units <= MIN_UNITS)
-    {
-        selectedProduct->isActive = 0;
-    }
 }
